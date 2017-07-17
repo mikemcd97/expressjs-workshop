@@ -1,5 +1,20 @@
 var express = require('express');
 var app = express();
+var reddit = require('../reddit.js');
+var request = require('request-promise');
+var mysql = require('promise-mysql');
+
+
+// create a connection to our Cloud9 server
+var connection = mysql.createPool({
+    host     : 'localhost',
+    user     : 'root', 
+    password : '',
+    database: 'reddit',
+    connectionLimit: 10
+});
+
+var myReddit = new reddit(connection);
 
 app.get('/hello', function (req, res) {
   if (req.query.name){
@@ -10,7 +25,7 @@ app.get('/hello', function (req, res) {
   }
 });
 
- app.get('/calculator/:operation', function (req, res){
+app.get('/calculator/:operation', function (req, res){
   var num1 = req.query.num1 || 0;
   var num2 = req.query.num2 || 0;
   if(req.params.operation === 'add'){
@@ -29,6 +44,35 @@ app.get('/hello', function (req, res) {
 });
 
 
+myReddit.getAllPosts()
+  .then(function(response){
+    var mapped = response.map(function(value, index){
+      return `
+       
+        <li class="post-item">
+          <h2 class="post-item__title">
+            <a href=${value.url}>${value.title}</a>
+          </h2>
+          <p>Created by ${value.user.username}</p>
+        </li>
+       
+        `;
+    });
+    
+    return `
+    <!DOCTYPE html>
+    <div id="posts">
+      <h1>Posts</h1>
+      <ul class="posts-list">
+        ${mapped}
+      </ul>
+    </div>`;
+    })
+    .then(function(response){
+      app.get('/posts', function(req, res){
+        res.send(response);
+    });
+});
 
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
