@@ -9,9 +9,12 @@
   "author": "DecodeMTL <hello@decodemtl.com>",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.13.3",
     "promise-mysql": "^3.0.2",
+    "pug": "^2.0.0-rc.2",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "static": "^2.0.0"
   }
 }

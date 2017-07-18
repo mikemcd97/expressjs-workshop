@@ -1,8 +1,12 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 var reddit = require('../reddit.js');
 var request = require('request-promise');
 var mysql = require('promise-mysql');
+
+app.set('view engine', 'pug');
+
 
 
 // create a connection to our Cloud9 server
@@ -46,33 +50,35 @@ app.get('/calculator/:operation', function (req, res){
 
 myReddit.getAllPosts()
   .then(function(response){
-    var mapped = response.map(function(value, index){
-      return `
-       
-        <li class="post-item">
-          <h2 class="post-item__title">
-            <a href=${value.url}>${value.title}</a>
-          </h2>
-          <p>Created by ${value.user.username}</p>
-        </li>
-       
-        `;
-    });
-    
-    return `
-    <!DOCTYPE html>
-    <div id="posts">
-      <h1>Posts</h1>
-      <ul class="posts-list">
-        ${mapped}
-      </ul>
-    </div>`;
-    })
-    .then(function(response){
-      app.get('/posts', function(req, res){
-        res.send(response);
-    });
+    app.get('/posts', function(req, res){
+      res.render('posts-list', {posts: response});
+    }); 
 });
+
+app.get('/new-post', function(req, res){
+  res.render('create-content');
+});
+
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+app.use('/createPost', urlencodedParser, function(req, res){
+  
+  var info = req.body;
+  
+  myReddit.createPost({
+    userId: 1,
+    title: info.title,
+    url: info.url,
+    subredditId: 1
+      
+});
+  
+  res.redirect('/posts');
+ 
+  
+});
+  
+app.use('/files', express.static('static_files'));
 
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */

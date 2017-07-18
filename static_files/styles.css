@@ -1,0 +1,29 @@
+ul{
+    list-style-type: none;
+    /*text-align: center;*/
+}
+
+a{
+    color: #EF233C;
+    font-family: arial;
+    font-style: italic;
+    font-size: 2em;
+    text-decoration: none;
+}
+
+a:hover{
+    color: teal;
+    margin-left: 600px;
+    font-family: webdings;
+    font-size: 3em;
+}
+
+p{
+    color: #2B2D42;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+body{
+    background-color: #EDF2F4;
+}
